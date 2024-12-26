@@ -1,80 +1,252 @@
-/* This file contains the CSS styles for the application */
-
-body {
+/* General reset and base styles */
+* {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
-}
-
-header {
+    color: #333;
+    line-height: 1.6;
+    padding-bottom: 60px; /* Ensure footer is always visible */
+  }
+  
+  .container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  /* Header styles */
+  header {
     background: #333;
     color: #fff;
     padding: 10px 0;
     text-align: center;
-}
+  }
+  
+  header h1 {
+    margin: 0;
+    font-size: 2rem;
+  }
 
-footer {
+  nav ul {
+    display: flex;
+    flex-direction: row;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  nav ul li {
+    margin-right: 10px;
+  }
+  
+  nav ul li a {
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+    padding: 10px;
+  }
+  
+  /* Footer styles */
+  footer {
     background: #333;
     color: #fff;
     text-align: center;
     padding: 10px 0;
-    position: relative;
+    position: fixed;
     bottom: 0;
     width: 100%;
-}
-
-.container {
-    width: 80%;
-    margin: auto;
-    overflow: hidden;
-}
-
-.button {
+  }
+  
+  /* Button styles */
+  button,
+  .btn {
     display: inline-block;
-    font-size: 16px;
+    background: #333;
     color: #fff;
-    background: #007bff;
     padding: 10px 20px;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
-}
-
-.button:hover {
-    background: #0056b3;
-}
-
-.card {
+    text-align: center;
+    transition: background 0.3s;
+  }
+  
+  button:hover,
+  .btn:hover {
+    background: #555;
+  }
+  
+  /* Form styles */
+  form {
     background: #fff;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin: 20px 0;
     padding: 20px;
-}
-
-h1, h2, h3 {
-    color: #333;
-}
-
-input[type="text"],
-input[type="password"],
-textarea {
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .form-group input,
+  .form-group textarea {
     width: 100%;
     padding: 10px;
-    margin: 10px 0;
     border: 1px solid #ccc;
     border-radius: 5px;
-}
-
-input[type="submit"] {
-    background: #28a745;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
+  }
+  
+  /* Error message styles */
+  .error {
+    color: red;
+    margin-bottom: 15px;
+  }
+  
+  /* Specific component styles */
+  
+  /* HomePage styles */
+  .home-page {
+    text-align: center;
+    padding: 50px 0;
+  }
+  
+  .home-page h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+  }
+  
+  .home-page p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+  }
+  
+  .action-buttons .btn {
+    margin: 10px;
+  }
+  
+  /* LoginPage styles */
+  .login-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 50px 0;
+  }
+  
+  .login-section {
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .login-section h1 {
+    margin-bottom: 20px;
+  }
+  
+  /* DebatePage styles */
+  .debate-page {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .debate-list,
+  .debate-details {
+    margin: 20px 0;
+  }
+  
+  /* TeamSelectionPage styles */
+  .team-selection-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 50px 0;
+  }
+  
+  .team-selection-section {
+    width: 100%;
+    max-width: 800px;
+  }
+  
+  .teams-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  .teams-list .team {
+    background: #fff;
+    padding: 20px;
     border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     cursor: pointer;
-}
-
-input[type="submit"]:hover {
-    background: #218838;
-}
+    transition: transform 0.2s;
+  }
+  
+  .teams-list .team:hover {
+    transform: scale(1.05);
+  }
+  
+  .team-selection-section h1 {
+    margin-bottom: 20px;
+  }
+  
+  /* AdminPage styles */
+  .admin-page {
+    padding: 50px 0;
+  }
+  
+  .admin-panel {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Additional component styles */
+  
+  /* AudioPlayer styles */
+  .audio-player {
+    margin-top: 20px;
+  }
+  
+  .audio-player button {
+    margin: 10px 0;
+  }
+  
+  /* Timer styles */
+  .timer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    font-size: 2rem;
+  }
+  
+  /* UserList styles */
+  .user-list {
+    list-style: none;
+  }
+  
+  .user-list li {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  /* MicControl styles */
+  .mic-control {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .mic-control button {
+    margin: 0 10px;
+  }
