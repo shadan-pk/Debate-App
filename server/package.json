@@ -1,20 +1,27 @@
 {
-  "name": "debate-app",
+  "name": "debate-app-server",
   "version": "1.0.0",
-  "description": "A web application for managing and participating in debates.",
+  "description": "Backend server for the Debate App",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "dependencies": {
-    "express": "^4.17.1",
-    "cors": "^2.8.5",
-    "body-parser": "^1.19.0"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.7"
+    "dev": "nodemon index.js"
   },
   "author": "Your Name",
-  "license": "ISC"
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^7.8.3",
+    "pg": "^8.13.1",
+    "sequelize": "^6.37.5",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
 }
