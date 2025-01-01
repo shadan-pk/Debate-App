@@ -1,10 +1,27 @@
+// filepath: /e:/Github/DA/git/debate-app/Debate-App/server/routes/authRoutes.js
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const router = express.Router();
 
-// Login Route
+// Add User Route
+router.post('/addUser', async (req, res) => {
+  const { username, password, role } = req.body;
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
+    const user = await User.create({
+      username,
+      password: hashedPassword,
+      role,
+    });
+    res.status(201).json({ message: 'User created successfully', user });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Existing Login Route
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -27,7 +44,6 @@ router.post('/login', async (req, res) => {
 });
 
 module.exports = router;
-
 
 
 
