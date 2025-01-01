@@ -1,10 +1,8 @@
-# README.md
-
-# Debate Application
+## Debate Application
 
 This is a debate application designed to facilitate and manage debate events. It includes features for user authentication, event creation, team selection, and real-time debate management.
 
-## Installation
+## Installation  
 
 1. Clone the repository:
 
@@ -85,7 +83,7 @@ To get started with the project, follow these steps:
 
 1. Clone the repository:
    ```
-   git clone <repository-url>
+   git clone https://github.com/shadan-pk/Debate-App.git
    ```
 
 2. Navigate to the project directory:
@@ -102,12 +100,12 @@ To get started with the project, follow these steps:
 
 4. Start the server:
    ```
-   node index.js
+   npm start --inside server/
    ```
 
 5. Start the client application:
    ```
-   npm start
+   npm start --inside debate-app/
    ```
 
 ## Usage
@@ -116,10 +114,23 @@ To get started with the project, follow these steps:
 - Use the login page to authenticate users.
 - Admin users can access the admin panel to manage debates and users.
 
+
+## Development
+
+This project is still in development. The following areas need to be addressed:
+
+    • UI/UX improvements
+
+    • Database connectivity
+
+    • Other enhancements
+
+
 ## Contributing
 
 Contributions are welcome! Please submit a pull request or open an issue for any enhancements or bug fixes.
 
+
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License.
