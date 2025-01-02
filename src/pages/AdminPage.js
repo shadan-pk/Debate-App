@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import UserList from '../components/UserList';
 import TeamSide from '../components/TeamSide';
 import DebateList from '../components/DebateList';
-import useAuth  from '../hooks/useAuth';
+import useAuth from '../hooks/useAuth';
 
 const AdminPage = () => {
   const { user, loading, logout } = useAuth();
@@ -11,6 +11,8 @@ const AdminPage = () => {
   useEffect(() => {
     if (user && user.role === 'admin') {
       setAdminAccess(true);
+    } else {
+      setAdminAccess(false);
     }
   }, [user]);
 
