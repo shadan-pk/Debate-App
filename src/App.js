@@ -9,6 +9,7 @@ import LoginPage from './pages/LoginPage';
 import AdminPage from './pages/AdminPage';
 import DebatePage from './pages/DebatePage';
 import TeamSelectionPage from './pages/TeamSelectionPage';
+import SignupPage from './pages/SignupPage';
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
               <Route path="/admin" element={<AdminPage />} />
               <Route path="/debate" element={<DebatePage />} />
               <Route path="/team-selection" element={<TeamSelectionPage />} />
+              <Route path="/SignupPage" element={<SignupPage />} />
             </Routes>
           </div>
           <Footer />
