@@ -1,4 +1,3 @@
-// filepath: /e:/Github/DA/git/debate-app/Debate-App/server/models/user.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/sequelize');
 
@@ -21,8 +20,8 @@ const User = sequelize.define('User', {
     },
   },
 }, {
-  tableName: 'users', // Specify the table name
-  timestamps: false, // Disable automatic timestamps
+  timestamps: true, // Enable timestamps
+  tableName: 'users', // Explicitly set the table name
 });
 
 module.exports = User;
