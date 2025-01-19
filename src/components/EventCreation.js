@@ -5,9 +5,18 @@ const EventCreation = () => {
   const [eventName, setEventName] = useState('');
   const [eventCode, setEventCode] = useState('');
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleCreateEvent = async (e) => {
     e.preventDefault();
+    const codePattern = /^[A-Za-z0-9]{6}$/;
+    if (!codePattern.test(eventCode)) {
+      setMessage('Event Code must be 6 alphanumeric characters.');
+      return;
+    }
+
+    setLoading(true);
+    setMessage('');
     try {
       const eventData = { name: eventName, code: eventCode };
       const response = await axios.post('/events', eventData); // Adjust API endpoint as needed
@@ -16,17 +25,24 @@ const EventCreation = () => {
       setEventCode('');
     } catch (error) {
       console.error('Error creating event:', error);
-      setMessage('Error creating event. Please try again.');
+      if (error.response && error.response.data && error.response.data.message) {
+        setMessage(`Error: ${error.response.data.message}`);
+      } else {
+        setMessage('Error creating event. Please try again.');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="event-creation">
       <h2>Create New Event</h2>
-      <form onSubmit={handleCreateEvent}>
+      <form onSubmit={handleCreateEvent} className="event-form">
         <div>
-          <label>Event Name:</label>
+          <label htmlFor="eventName">Event Name:</label>
           <input
+            id="eventName"
             type="text"
             value={eventName}
             onChange={(e) => setEventName(e.target.value)}
@@ -34,17 +50,22 @@ const EventCreation = () => {
           />
         </div>
         <div>
-          <label>Event Code:</label>
+          <label htmlFor="eventCode">Event Code:</label>
           <input
+            id="eventCode"
             type="text"
             value={eventCode}
             onChange={(e) => setEventCode(e.target.value)}
             required
+            pattern="[A-Za-z0-9]{6}"
+            title="6 alphanumeric characters"
           />
         </div>
-        <button type="submit">Create Event</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Creating Event...' : 'Create Event'}
+        </button>
       </form>
-      {message && <p>{message}</p>}
+      {message && <p className="message">{message}</p>}
     </div>
   );
 };
