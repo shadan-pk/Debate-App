@@ -1,11 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { useDebate } from '../contexts/DebateContext'; // Importing the DebateContext
-import DebateList from '../components/DebateList'; // Importing the DebateList component
-import DebateDetails from '../components/DebateDetails'; // Importing the DebateDetails component
-import Timer from '../components/Timer'; // Importing the Timer component
-import Header from '../components/Header'; // Importing the Header component
-import Footer from '../components/Footer'; // Importing the Footer component
-import AudioPlayer from '../components/AudioPlayer'; // Importing the AudioPlayer component
+import React, { useEffect, useState, lazy, Suspense } from 'react';
+import { useDebate } from '../contexts/DebateContext';
+import DebateList from '../components/DebateList';
+import DebateDetails from '../components/DebateDetails';
+import Timer from '../components/Timer';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import Spinner from '../components/Spinner';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+// Lazy load AudioPlayer
+const AudioPlayer = lazy(() => import('../components/AudioPlayer'));
 
 const DebatePage = () => {
   const { debates, currentDebate, setCurrentDebate, loading, fetchDebates } = useDebate();
@@ -13,11 +18,19 @@ const DebatePage = () => {
 
   useEffect(() => {
     // Fetch debates when the component mounts
-    fetchDebates().catch((err) => setError('Error fetching debates. Please try again later.'));
+    fetchDebates().catch((err) => {
+      console.error('Error fetching debates:', err);
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(`Error: ${err.response.data.message}`);
+      } else {
+        setError('Error fetching debates. Please try again later.');
+      }
+    });
   }, [fetchDebates]);
 
   const handleDebateSelect = (debate) => {
     setCurrentDebate(debate);
+    toast.info(`Selected debate: ${debate.title}`);
   };
 
   return (
@@ -27,23 +40,35 @@ const DebatePage = () => {
         <h1>Debate Dashboard</h1>
       </header>
       {loading ? (
-        <div>Loading...</div>
+        <Spinner />
       ) : error ? (
-        <div className="error">{error}</div>
+        <div className="error" role="alert" aria-live="assertive">
+          {error}
+        </div>
       ) : (
         <main>
           <section className="debate-list">
             <h2>Active Debates</h2>
-            <DebateList debates={debates} onSelect={handleDebateSelect} />
+            {debates.length > 0 ? (
+              <DebateList debates={debates} onSelect={handleDebateSelect} />
+            ) : (
+              <p>No active debates available at the moment.</p>
+            )}
           </section>
           <section className="debate-details">
             {currentDebate ? (
               <>
                 <DebateDetails debate={currentDebate} />
                 <h3>Timer</h3>
-                <Timer initialMinutes={10} initialSeconds={0} onEnd={() => console.log('Debate Time Ended')} />
+                <Timer
+                  initialMinutes={10}
+                  initialSeconds={0}
+                  onEnd={() => toast.warning('Debate Time Ended')}
+                />
                 <h3>Audio Player</h3>
-                <AudioPlayer />
+                <Suspense fallback={<div>Loading Audio Player...</div>}>
+                  <AudioPlayer />
+                </Suspense>
               </>
             ) : (
               <div>Select a debate to view details</div>
@@ -52,6 +77,7 @@ const DebatePage = () => {
         </main>
       )}
       <Footer />
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
     </div>
   );
 };
