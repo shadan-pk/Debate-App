@@ -1,58 +1,80 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useAuth from '../hooks/useAuth'; // Importing the useAuth hook
-import { useDebate } from '../contexts/DebateContext'; // Importing the useDebate hook
-import Header from '../components/Header'; // Importing the Header component
-import Footer from '../components/Footer'; // Importing the Footer component
-import TeamSide from '../components/TeamSide'; // Importing the TeamSide component
+import useAuth from '../hooks/useAuth';
+import { useDebate } from '../contexts/DebateContext';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import TeamSide from '../components/TeamSide';
 
 const TeamSelectionPage = () => {
   const { user } = useAuth();
   const { teams, fetchTeams, joinTeam } = useDebate();
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchTeams().catch((err) => setError('Error fetching teams. Please try again later.'));
-  }, [fetchTeams]);
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    setLoading(true);
+    fetchTeams()
+      .catch(() => setError('Error fetching teams. Please try again later.'))
+      .finally(() => setLoading(false));
+  }, [user, fetchTeams, navigate]);
 
-  const handleTeamSelect = (team) => {
-    setSelectedTeam(team);
-  };
+  const handleTeamSelect = (team) => setSelectedTeam(team);
 
   const handleJoinTeam = async () => {
     if (!selectedTeam) {
       setError('Please select a team to join.');
       return;
     }
-
     try {
+      setError('');
       await joinTeam(selectedTeam.id);
-      navigate('/debates'); // Redirect to debates page after joining a team
-    } catch (err) {
+      navigate('/debates');
+    } catch {
       setError('Error joining team. Please try again later.');
     }
   };
 
+  if (loading) {
+    return (
+      <div>
+        <Header />
+        <div>Loading teams...</div>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div>
       <Header />
-      <div>
+      <main>
         <h1>Team Selection</h1>
-        {error && <div>{error}</div>}
-        <div>
+        {error && <div className="error">{error}</div>}
+        <div className="team-list">
           {teams.map((team) => (
             <TeamSide
               key={team.id}
               team={team}
               onSelect={() => handleTeamSelect(team)}
-              selected={selectedTeam && selectedTeam.id === team.id}
+              selected={selectedTeam?.id === team.id}
             />
           ))}
         </div>
-        <button onClick={handleJoinTeam}>Join Team</button>
-      </div>
+        <button
+          onClick={handleJoinTeam}
+          disabled={!selectedTeam}
+          className={!selectedTeam ? 'disabled' : ''}
+        >
+          Join Team
+        </button>
+      </main>
       <Footer />
     </div>
   );
