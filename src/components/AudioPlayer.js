@@ -19,10 +19,14 @@ const AudioPlayer = ({ peer }) => {
       setError('An error occurred while receiving the audio stream.');
     };
 
-    peer.on('stream', handleStream);
-    peer.on('error', handleError);
+    try {
+      peer.on('stream', handleStream);
+      peer.on('error', handleError);
+    } catch (err) {
+      console.error('Error setting up peer listeners:', err);
+      setError('An unexpected error occurred.');
+    }
 
-    // Clean up the event listeners when the component unmounts or the peer changes
     return () => {
       peer.off('stream', handleStream);
       peer.off('error', handleError);
@@ -31,15 +35,20 @@ const AudioPlayer = ({ peer }) => {
 
   return (
     <div>
-      <audio ref={audioRef} autoPlay controls />
+      <audio ref={audioRef} autoPlay controls aria-label="Audio stream player">
+        Your browser does not support the audio element.
+      </audio>
       {!streamAvailable && !error && <p>Waiting for audio stream...</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p style={{ color: 'red', fontWeight: 'bold' }}>{error}</p>}
     </div>
   );
 };
 
 AudioPlayer.propTypes = {
-  peer: PropTypes.object.isRequired, // Adjust the shape as per your peer implementation
+  peer: PropTypes.shape({
+    on: PropTypes.func.isRequired,
+    off: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 export default AudioPlayer;
