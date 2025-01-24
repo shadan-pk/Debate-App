@@ -1,21 +1,36 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import axios from '../services/api'; // Ensure this service is set up for API calls
+import axios from '../services/api';
+import './TeamSide.css';
 
-const TeamSide = () => {
-  const [teams, setTeams] = useState([]);
-  const [selectedTeam, setSelectedTeam] = useState(null);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(true);
+interface Team {
+  id: number;
+  name: string;
+  members?: Array<{ id: number; name: string }>;
+  // Add more fields as necessary
+}
+
+const TeamSide: React.FC = () => {
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+  const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true);
+  const [retry, setRetry] = useState<number>(0);
 
   const fetchTeams = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
-      const response = await axios.get('/teams'); // Adjust API endpoint as needed
+      const response = await axios.get<Team[]>('/teams');
       setTeams(response.data);
-    } catch (error) {
-      setError('Failed to fetch teams. Please try again later.');
-      console.error('Error fetching teams:', error);
+    } catch (err: any) {
+      if (err.response) {
+        setError(`Error: ${err.response.status} - ${err.response.data.message || 'Failed to fetch teams.'}`);
+      } else if (err.request) {
+        setError('Network error. Please check your connection.');
+      } else {
+        setError('An unexpected error occurred.');
+      }
+      console.error('Error fetching teams:', err);
     } finally {
       setLoading(false);
     }
@@ -23,24 +38,43 @@ const TeamSide = () => {
 
   useEffect(() => {
     fetchTeams();
-  }, [fetchTeams]);
+  }, [fetchTeams, retry]);
 
-  const handleTeamSelect = (team) => setSelectedTeam(team);
+  const handleTeamSelect = (team: Team) => setSelectedTeam(team);
+
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLLIElement>, team: Team) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      handleTeamSelect(team);
+    }
+  };
+
+  const handleRetry = () => setRetry((prev) => prev + 1);
 
   return (
     <div className="team-side">
       <h2>Teams</h2>
-      {loading && <p>Loading teams...</p>}
-      {error && <p className="error">{error}</p>}
+      {loading && (
+        <div className="loading">
+          <div className="spinner"></div>
+          <p>Loading teams...</p>
+        </div>
+      )}
+      {error && (
+        <div className="error">
+          <p>{error}</p>
+          <button onClick={handleRetry} className="retry-button">Retry</button>
+        </div>
+      )}
       {!loading && !error && (
-        <ul className="team-list">
+        <ul className="team-list" role="listbox" aria-label="Team List">
           {teams.map((team) => (
             <li
               key={team.id}
               onClick={() => handleTeamSelect(team)}
-              className={selectedTeam?.id === team.id ? 'selected' : ''}
+              onKeyPress={(e) => handleKeyPress(e, team)}
+              className={`team-item ${selectedTeam?.id === team.id ? 'selected' : ''}`}
               tabIndex={0}
-              role="button"
+              role="option"
               aria-selected={selectedTeam?.id === team.id}
             >
               {team.name}
@@ -51,8 +85,8 @@ const TeamSide = () => {
       {selectedTeam && (
         <div className="team-details">
           <h3>{selectedTeam.name}</h3>
-          <p>ID: {selectedTeam.id}</p>
-          <p>Number of Members: {selectedTeam.members?.length || 0}</p>
+          <p><strong>ID:</strong> {selectedTeam.id}</p>
+          <p><strong>Number of Members:</strong> {selectedTeam.members?.length || 0}</p>
           {/* Add more team details as needed */}
         </div>
       )}
