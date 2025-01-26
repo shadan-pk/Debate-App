@@ -1,15 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from '../services/api';
-import './TeamSide.css';
 
-interface Team {
-  id: number;
-  name: string;
-  members?: Array<{ id: number; name: string }>;
-  // Add more fields as necessary
-}
 
-const TeamSide: React.FC = () => {
+const TeamSide = () => {
   const [teams, setTeams] = useState<Team[]>([]);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [error, setError] = useState<string>('');
@@ -40,13 +33,13 @@ const TeamSide: React.FC = () => {
     fetchTeams();
   }, [fetchTeams, retry]);
 
-  const handleTeamSelect = (team: Team) => setSelectedTeam(team);
+  // const handleTeamSelect = (team: Team) => setSelectedTeam(team);
 
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLLIElement>, team: Team) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      handleTeamSelect(team);
-    }
-  };
+  // const handleKeyPress = (event: React.KeyboardEvent<HTMLLIElement>, team: Team) => {
+  //   if (event.key === 'Enter' || event.key === ' ') {
+  //     handleTeamSelect(team);
+  //   }
+  // };
 
   const handleRetry = () => setRetry((prev) => prev + 1);
 
