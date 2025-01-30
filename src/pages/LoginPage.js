@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
-import axios from 'axios';
+import { loginUser } from '../services/authService'; // Abstracted service
+import './LoginPage.css'; // Assuming you have CSS for styling
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -9,25 +10,35 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false); // Optional feature
   
   const navigate = useNavigate();
   const { login } = useAuth();
 
+  const validateInputs = () => {
+    if (username.trim().length < 3) {
+      setError('Username must be at least 3 characters long.');
+      return false;
+    }
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long.');
+      return false;
+    }
+    return true;
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     
-    if (!username || !password) {
-      setError('Please enter both username and password.');
-      return;
-    }
+    if (!validateInputs()) return;
 
     setLoading(true);
     setError('');
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/login`, { username, password });
+      const response = await loginUser(username, password);
       const { token, role } = response.data;
-      login(token);
+      login(token, rememberMe); // Modify login to handle 'remember me' if needed
       
       if (role === 'admin') {
         navigate('/admin');
@@ -40,7 +51,8 @@ const LoginPage = () => {
       } else if (err.request) {
         setError('Network error. Please try again later.');
       } else {
-        setError('An unexpected error occurred.');
+        console.error('Unexpected error:', err);
+        setError('An unexpected error occurred. Please try again.');
       }
     } finally {
       setLoading(false);
@@ -49,7 +61,9 @@ const LoginPage = () => {
 
   return (
     <div className="login-container">
-      <form onSubmit={handleLogin} className="login-form">
+      <form onSubmit={handleLogin} className="login-form" aria-labelledby="login-form-title">
+        <h2 id="login-form-title">Login</h2>
+        
         <div className="form-group">
           <label htmlFor="username">Username:</label>
           <input
@@ -59,6 +73,7 @@ const LoginPage = () => {
             onChange={(e) => setUsername(e.target.value)}
             required
             autoFocus
+            aria-required="true"
           />
         </div>
         
@@ -71,18 +86,38 @@ const LoginPage = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              aria-required="true"
             />
-            <button type="button" onClick={() => setShowPassword(!showPassword)}>
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              className="toggle-password"
+            >
               {showPassword ? 'Hide' : 'Show'}
             </button>
           </div>
         </div>
+
+        <div className="form-group remember-me">
+          <input
+            id="rememberMe"
+            type="checkbox"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+          />
+          <label htmlFor="rememberMe">Remember Me</label>
+        </div>
         
-        {error && <div className="error-message">{error}</div>}
+        {error && <div className="error-message" role="alert">{error}</div>}
         
-        <button type="submit" disabled={loading}>
+        <button type="submit" disabled={loading} className="login-button">
           {loading ? 'Logging in...' : 'Login'}
         </button>
+
+        <div className="forgot-password">
+          <a href="/forgot-password">Forgot Password?</a>
+        </div>
       </form>
     </div>
   );
